@@ -27,6 +27,7 @@ export function registerReadTool(server: McpServer, client: KanboxClient) {
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
+        idempotentHint: true,
         openWorldHint: true,
       },
     },
