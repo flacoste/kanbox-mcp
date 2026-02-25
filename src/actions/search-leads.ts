@@ -3,10 +3,10 @@ import { type KanboxClient } from "../lib/kanbox-client.js";
 import { normalizeLead } from "../lib/normalize.js";
 
 export const searchLeadsSchema = z.object({
-  name: z.string().optional(),
-  q: z.string().optional(),
-  limit: z.number().int().optional(),
-  offset: z.number().int().optional(),
+  name: z.string().describe("Filter by list name").optional(),
+  q: z.string().describe("Search query for leads").optional(),
+  limit: z.number().int().min(1).max(100).describe("Max results to return (1-100)").optional(),
+  offset: z.number().int().min(0).describe("Number of results to skip (0+)").optional(),
 });
 
 export type SearchLeadsParams = z.infer<typeof searchLeadsSchema>;
@@ -21,7 +21,7 @@ export async function searchLeads(
   );
 
   return {
-    items: (data.items ?? []).map(normalizeLead),
+    items: ((data.items ?? []) as Record<string, unknown>[]).map(normalizeLead),
     count: data.count ?? 0,
   };
 }

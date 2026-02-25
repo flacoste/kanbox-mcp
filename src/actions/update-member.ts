@@ -2,14 +2,14 @@ import { z } from "zod";
 import { type KanboxClient } from "../lib/kanbox-client.js";
 
 export const updateMemberSchema = z.object({
-  id: z.number().int(),
-  email: z.string().optional(),
-  phone: z.string().optional(),
-  labels: z.array(z.string()).optional(),
-  pipeline: z.string().optional(),
-  step: z.string().optional(),
-  custom: z.string().optional(),
-  icebreaker: z.string().optional(),
+  id: z.number().int().describe("Member ID (from search_members id field)"),
+  email: z.string().describe("New email address").optional(),
+  phone: z.string().describe("New phone number").optional(),
+  labels: z.array(z.string()).describe("FULL REPLACEMENT label list — pass ALL desired labels, not just additions").optional(),
+  pipeline: z.string().describe("Pipeline name to assign").optional(),
+  step: z.string().describe("Pipeline step to assign").optional(),
+  custom: z.string().describe("Custom note field").optional(),
+  icebreaker: z.string().describe("Icebreaker note").optional(),
 });
 
 export type UpdateMemberParams = z.infer<typeof updateMemberSchema>;

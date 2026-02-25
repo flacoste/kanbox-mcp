@@ -92,15 +92,6 @@ describe("kanbox_read integration", () => {
   });
 
   it("returns API error as isError response", async () => {
-    getSpy.mockRejectedValue(
-      Object.assign(new Error("Kanbox API error 401: Unauthorized"), {
-        name: "KanboxApiError",
-        status: 401,
-        body: "Unauthorized",
-      }),
-    );
-
-    // Use a real KanboxApiError
     const { KanboxApiError } = await import("../../src/lib/kanbox-client.js");
     getSpy.mockRejectedValue(new KanboxApiError(401, "Unauthorized"));
 

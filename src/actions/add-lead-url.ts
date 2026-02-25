@@ -2,8 +2,17 @@ import { z } from "zod";
 import { type KanboxClient } from "../lib/kanbox-client.js";
 
 export const addLeadUrlSchema = z.object({
-  linkedin_profile_url: z.string().url(),
-  list: z.string(),
+  linkedin_profile_url: z.string().url().refine(
+    (url) => {
+      try {
+        return new URL(url).hostname.endsWith("linkedin.com");
+      } catch {
+        return false;
+      }
+    },
+    { message: "URL must be a LinkedIn profile URL (*.linkedin.com)" },
+  ),
+  list: z.string().describe("Name of the Kanbox list to add the lead to"),
 });
 
 export type AddLeadUrlParams = z.infer<typeof addLeadUrlSchema>;

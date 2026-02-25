@@ -2,8 +2,8 @@ import { z } from "zod";
 import { type KanboxClient } from "../lib/kanbox-client.js";
 
 export const sendMessageSchema = z.object({
-  recipient_linkedin_id: z.string(),
-  message: z.string(),
+  recipient_linkedin_id: z.string().describe("Internal LinkedIn ID (ACoAAA… format) from search_members linkedin_id field"),
+  message: z.string().max(8000).describe("Message text to send (max 8000 chars)"),
 });
 
 export type SendMessageParams = z.infer<typeof sendMessageSchema>;

@@ -32,15 +32,7 @@ export function formatError(error: unknown): CallToolResult {
 export function formatResult(data: unknown): CallToolResult {
   return {
     content: [
-      { type: "text", text: JSON.stringify(data, null, 2) },
-    ],
-  };
-}
-
-export function formatAccepted(message: string): CallToolResult {
-  return {
-    content: [
-      { type: "text", text: `Operation accepted (async): ${message}` },
+      { type: "text", text: JSON.stringify(data) },
     ],
   };
 }

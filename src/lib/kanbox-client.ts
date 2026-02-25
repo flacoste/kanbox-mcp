@@ -91,6 +91,7 @@ export class KanboxClient {
         Accept: "application/json",
         ...((init.headers as Record<string, string>) ?? {}),
       },
+      signal: AbortSignal.timeout(30_000),
     });
 
     const text = await res.text();

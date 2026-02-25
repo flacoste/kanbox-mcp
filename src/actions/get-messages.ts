@@ -3,8 +3,8 @@ import { type KanboxClient } from "../lib/kanbox-client.js";
 import { normalizeMessage } from "../lib/normalize.js";
 
 export const getMessagesSchema = z.object({
-  conversation_id: z.number().int(),
-  cursor: z.string().optional(),
+  conversation_id: z.number().int().describe("Conversation ID from search_members conversations[].id"),
+  cursor: z.string().describe("Pagination cursor from previous response").optional(),
 });
 
 export type GetMessagesParams = z.infer<typeof getMessagesSchema>;
@@ -28,7 +28,7 @@ export async function getMessages(
     conversation_id: String(params.conversation_id),
     participant_name: data.participant_name ?? "Unknown",
     participant_linkedin_id: data.participant_id ?? null,
-    messages: (data.messages ?? []).map(normalizeMessage),
+    messages: ((data.messages ?? []) as Record<string, unknown>[]).map(normalizeMessage),
     has_more: data.has_more ?? false,
     next_cursor: data.next_cursor ?? null,
   };

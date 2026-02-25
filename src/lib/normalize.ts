@@ -1,8 +1,6 @@
 // Normalize verbose Kanbox API responses into compact, flat structures.
 // See plan for field mappings: members flatten lead.*, leads flatten lnuser.*
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export interface NormalizedMember {
   id: number;
   linkedin_id: string | null;
@@ -95,9 +93,9 @@ export interface NormalizedList {
   is_processing: boolean;
 }
 
-export function normalizeMember(raw: any): NormalizedMember {
-  const lead = raw.lead ?? {};
-  const lastMsg = raw.last_message;
+export function normalizeMember(raw: Record<string, unknown>): NormalizedMember {
+  const lead = (raw.lead ?? {}) as Record<string, unknown>;
+  const lastMsg = raw.last_message as Record<string, unknown> | undefined;
 
   return {
     id: raw.id,
@@ -125,7 +123,7 @@ export function normalizeMember(raw: any): NormalizedMember {
     connected_at: raw.connected_at ?? null,
     is_premium: lead.is_premium ?? false,
     is_open_profile: lead.is_open_profile ?? false,
-    labels: (raw.labels ?? []).map((l: any) => ({
+    labels: ((raw.labels ?? []) as Record<string, unknown>[]).map((l) => ({
       id: l.id,
       name: l.name,
       color: l.color,
@@ -134,7 +132,7 @@ export function normalizeMember(raw: any): NormalizedMember {
     step_name: raw.step_name ?? null,
     icebreaker: raw.icebreaker ?? null,
     custom: raw.custom ?? null,
-    conversations: (raw.conversations_ids ?? []).map((c: any) => ({
+    conversations: ((raw.conversations_ids ?? []) as Record<string, unknown>[]).map((c) => ({
       id: c.id,
       last_activity: c.last_activity ?? c.lastactivity_at ?? null,
     })),
@@ -152,11 +150,11 @@ export function normalizeMember(raw: any): NormalizedMember {
     is_starred: raw.is_starred ?? false,
     is_archived: raw.is_archived ?? false,
     updated_at: raw.updated_at ?? null,
-  };
+  } as NormalizedMember;
 }
 
-export function normalizeLead(raw: any): NormalizedLead {
-  const lnuser = raw.lnuser ?? {};
+export function normalizeLead(raw: Record<string, unknown>): NormalizedLead {
+  const lnuser = (raw.lnuser ?? {}) as Record<string, unknown>;
 
   return {
     lead_id: raw.id,
@@ -181,7 +179,7 @@ export function normalizeLead(raw: any): NormalizedLead {
     is_connection: lnuser.is_connection ?? false,
     degree: raw.degree ?? null,
     connected_at: lnuser.connected_at ?? null,
-    labels: (lnuser.labels ?? []).map((l: any) => ({
+    labels: ((lnuser.labels ?? []) as Record<string, unknown>[]).map((l) => ({
       id: l.id,
       name: l.name,
       color: l.color,
@@ -189,12 +187,12 @@ export function normalizeLead(raw: any): NormalizedLead {
     invitation_type: lnuser.invitation_type ?? null,
     invitation_message: lnuser.invitation_message ?? null,
     updated_at: raw.updated_at ?? lnuser.updated_at ?? null,
-  };
+  } as NormalizedLead;
 }
 
-export function normalizeMessage(raw: any): NormalizedMessage {
-  const firstName = raw.from_firstname ?? "";
-  const lastName = raw.from_lastname ?? "";
+export function normalizeMessage(raw: Record<string, unknown>): NormalizedMessage {
+  const firstName = (raw.from_firstname as string) ?? "";
+  const lastName = (raw.from_lastname as string) ?? "";
   const from = [firstName, lastName].filter(Boolean).join(" ") || "Unknown";
 
   return {
@@ -205,14 +203,14 @@ export function normalizeMessage(raw: any): NormalizedMessage {
     is_from_participant: raw.is_from_user ?? false,
     attachment_name: raw.attachment_name ?? null,
     attachment_type: raw.attachment_type ?? null,
-  };
+  } as NormalizedMessage;
 }
 
-export function normalizeList(raw: any): NormalizedList {
+export function normalizeList(raw: Record<string, unknown>): NormalizedList {
   return {
     id: raw.id,
     name: raw.name,
     total_count: raw.total_count ?? 0,
     is_processing: raw.is_processing ?? false,
-  };
+  } as NormalizedList;
 }
