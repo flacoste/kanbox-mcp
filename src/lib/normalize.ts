@@ -29,15 +29,15 @@ export interface NormalizedMember {
   is_premium: boolean;
   is_open_profile: boolean;
   labels: Array<{ id: number; name: string; color: string }>;
-  pipeline: string | null;
-  step: string | null;
+  board: number | null;
+  step_name: string | null;
   icebreaker: string | null;
   custom: string | null;
   conversations: Array<{ id: number; last_activity: string | null }>;
   last_message: {
     text: string | null;
     at: string | null;
-    from: string | null;
+    from_id: string | null;
     attachment_name: string | null;
     attachment_type: string | null;
   } | null;
@@ -119,7 +119,7 @@ export function normalizeMember(raw: any): NormalizedMember {
     connections: lead.connections ?? null,
     is_connection: raw.is_connection ?? false,
     is_lead: raw.is_lead ?? false,
-    degree: lead.degree ?? null,
+    degree: raw.degree ?? null,
     connected_at: raw.connected_at ?? null,
     is_premium: lead.is_premium ?? false,
     is_open_profile: lead.is_open_profile ?? false,
@@ -128,8 +128,8 @@ export function normalizeMember(raw: any): NormalizedMember {
       name: l.name,
       color: l.color,
     })),
-    pipeline: raw.pipeline ?? null,
-    step: raw.step ?? null,
+    board: raw.board ?? null,
+    step_name: raw.step_name ?? null,
     icebreaker: raw.icebreaker ?? null,
     custom: raw.custom ?? null,
     conversations: (raw.conversations_ids ?? []).map((c: any) => ({
@@ -138,11 +138,11 @@ export function normalizeMember(raw: any): NormalizedMember {
     })),
     last_message: lastMsg
       ? {
-          text: lastMsg.text ?? null,
-          at: lastMsg.at ?? lastMsg.created_at ?? null,
-          from: lastMsg.from ?? null,
-          attachment_name: lastMsg.attachment_name ?? null,
-          attachment_type: lastMsg.attachment_type ?? null,
+          text: lastMsg.last_message_text ?? null,
+          at: lastMsg.last_message_at ?? null,
+          from_id: lastMsg.last_message_from_id ?? null,
+          attachment_name: lastMsg.last_message_attachment_name ?? null,
+          attachment_type: lastMsg.last_message_attachment_type ?? null,
         }
       : null,
     invitation_type: raw.invitation_type ?? null,

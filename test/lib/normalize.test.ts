@@ -10,6 +10,7 @@ describe("normalizeMember", () => {
   it("flattens lead.* fields to top level", () => {
     const raw = {
       id: 123,
+      degree: 1,
       lead: {
         linkedin_public_id: "janedoe",
         firstname: "Jane",
@@ -28,7 +29,6 @@ describe("normalizeMember", () => {
         skills: ["Product"],
         languages: ["English"],
         connections: 500,
-        degree: 1,
         is_premium: false,
         is_open_profile: true,
       },
@@ -36,17 +36,18 @@ describe("normalizeMember", () => {
       is_lead: false,
       connected_at: "2026-01-15T10:30:00Z",
       labels: [{ id: 1, name: "Priority", color: "color6" }],
-      pipeline: null,
-      step: null,
+      board: 42,
+      step: 3,
+      step_name: "Contacted",
       icebreaker: "Met at conf",
       custom: null,
       conversations_ids: [{ id: 9876, last_activity: "2026-01-20T14:30:00.000Z" }],
       last_message: {
-        text: "Hello!",
-        at: "2026-01-20T14:30:00.000Z",
-        from: "ACoAABExampleId",
-        attachment_name: null,
-        attachment_type: null,
+        last_message_text: "Hello!",
+        last_message_at: "2026-01-20T14:30:00.000Z",
+        last_message_from_id: "ACoAABExampleId",
+        last_message_attachment_name: null,
+        last_message_attachment_type: null,
       },
       invitation_type: "SENT",
       invitation_message: "Hi Jane!",
@@ -67,13 +68,16 @@ describe("normalizeMember", () => {
     expect(result.company_headcount).toBe(250);
     expect(result.company_linkedin_url).toBe("https://linkedin.com/company/acme");
     expect(result.connections).toBe(500);
+    expect(result.degree).toBe(1);
     expect(result.is_open_profile).toBe(true);
     expect(result.labels).toEqual([{ id: 1, name: "Priority", color: "color6" }]);
+    expect(result.board).toBe(42);
+    expect(result.step_name).toBe("Contacted");
     expect(result.conversations).toEqual([{ id: 9876, last_activity: "2026-01-20T14:30:00.000Z" }]);
     expect(result.last_message).toEqual({
       text: "Hello!",
       at: "2026-01-20T14:30:00.000Z",
-      from: "ACoAABExampleId",
+      from_id: "ACoAABExampleId",
       attachment_name: null,
       attachment_type: null,
     });
