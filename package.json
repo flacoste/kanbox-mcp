@@ -9,12 +9,22 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
+    "prepare": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.0",
     "zod": "^3.25.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flacoste/kanbox-mcp.git"
+  },
+  "keywords": ["mcp", "kanbox", "linkedin", "crm"],
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
