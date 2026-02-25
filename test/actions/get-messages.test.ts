@@ -11,7 +11,7 @@ describe("getMessages", () => {
     getSpy = vi.fn().mockResolvedValue({
       status: 200,
       data: {
-        items: [
+        messages: [
           {
             text: "Hello!",
             from_firstname: "Jane",
@@ -25,7 +25,8 @@ describe("getMessages", () => {
         ],
         has_more: true,
         next_cursor: "1700000000000",
-        user: { firstname: "Jane", lastname: "Doe", linkedin_id: "ACoAABExample" },
+        participant_name: "Jane Doe",
+        participant_id: "ACoAABExample",
       },
     });
     client.get = getSpy;
