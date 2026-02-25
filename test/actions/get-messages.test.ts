@@ -16,7 +16,7 @@ describe("getMessages", () => {
             text: "Hello!",
             from_firstname: "Jane",
             from_lastname: "Doe",
-            from: "ACoAABExample",
+            from_linkedin_id: "ACoAABExample",
             created_at: "2026-01-18T15:00:00Z",
             is_from_user: true,
             attachment_name: null,

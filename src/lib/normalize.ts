@@ -198,7 +198,7 @@ export function normalizeMessage(raw: any): NormalizedMessage {
   return {
     text: raw.text ?? null,
     from,
-    from_linkedin_id: raw.from ?? null,
+    from_linkedin_id: raw.from_linkedin_id ?? null,
     at: raw.created_at ?? raw.at,
     is_from_participant: raw.is_from_user ?? false,
     attachment_name: raw.attachment_name ?? null,

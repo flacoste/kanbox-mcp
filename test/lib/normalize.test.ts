@@ -162,7 +162,7 @@ describe("normalizeMessage", () => {
       text: "Hello there",
       from_firstname: "Jane",
       from_lastname: "Doe",
-      from: "ACoAABExampleId",
+      from_linkedin_id: "ACoAABExampleId",
       created_at: "2026-01-18T15:01:58.570Z",
       is_from_user: true,
       attachment_name: null,
