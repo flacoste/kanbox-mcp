@@ -398,49 +398,49 @@ Tool descriptions target ~120 words / ~180 tokens of description text. With Zod 
 
 ### Core Server
 
-- [ ] `kanbox_read` tool dispatches to 4 read actions (`search_members`, `search_leads`, `get_messages`, `list_lists`) and returns normalized Kanbox data
-- [ ] `kanbox_write` tool dispatches to 5 write actions (`update_member`, `send_message`, `send_connection`, `add_lead`, `add_lead_url`) and returns confirmation/error
-- [ ] Server starts via stdio transport with `node dist/index.js`
-- [ ] Server fails fast with clear error if `KANBOX_API_TOKEN` is not set
-- [ ] No stdout pollution — all debug output goes to stderr
+- [x] `kanbox_read` tool dispatches to 4 read actions (`search_members`, `search_leads`, `get_messages`, `list_lists`) and returns normalized Kanbox data
+- [x] `kanbox_write` tool dispatches to 5 write actions (`update_member`, `send_message`, `send_connection`, `add_lead`, `add_lead_url`) and returns confirmation/error
+- [x] Server starts via stdio transport with `node dist/index.js`
+- [x] Server fails fast with clear error if `KANBOX_API_TOKEN` is not set
+- [x] No stdout pollution — all debug output goes to stderr
 
 ### Read Actions
 
-- [ ] `search_members` — supports `q`, `linkedin_public_ids`, `updated_since`, `type`, `limit`, `offset`; returns full member profiles
-- [ ] `search_leads` — supports `name` (list filter), `q` (name search), `limit`, `offset`; returns scraped profiles not yet connected
-- [ ] `get_messages` — returns conversation messages with cursor pagination
-- [ ] `list_lists` — returns available Kanbox lists (needed for `add_lead` list parameter)
+- [x] `search_members` — supports `q`, `linkedin_public_ids`, `updated_since`, `type`, `limit`, `offset`; returns full member profiles
+- [x] `search_leads` — supports `name` (list filter), `q` (name search), `limit`, `offset`; returns scraped profiles not yet connected
+- [x] `get_messages` — returns conversation messages with cursor pagination
+- [x] `list_lists` — returns available Kanbox lists (needed for `add_lead` list parameter)
 
 ### Write Actions
 
-- [ ] `update_member` — updates member fields (email, phone, labels, pipeline, step, custom, icebreaker)
-- [ ] `send_message` — sends LinkedIn message via `recipient_linkedin_id`
-- [ ] `send_connection` — sends connection request with optional note
-- [ ] `add_lead` — adds structured lead (linkedin_public_id, firstname, lastname + optional fields) to a pre-existing named list
-- [ ] `add_lead_url` — adds lead by LinkedIn profile URL to a pre-existing named list; asynchronous with full enrichment (takes several minutes)
+- [x] `update_member` — updates member fields (email, phone, labels, pipeline, step, custom, icebreaker)
+- [x] `send_message` — sends LinkedIn message via `recipient_linkedin_id`
+- [x] `send_connection` — sends connection request with optional note
+- [x] `add_lead` — adds structured lead (linkedin_public_id, firstname, lastname + optional fields) to a pre-existing named list
+- [x] `add_lead_url` — adds lead by LinkedIn profile URL to a pre-existing named list; asynchronous with full enrichment (takes several minutes)
 
 ### Error Handling
 
-- [ ] Invalid action names return clear error
-- [ ] Invalid params return Zod validation error with field details
-- [ ] HTTP 4xx/5xx errors return `isError: true` with status code and message
-- [ ] 202 Accepted responses return success with async acknowledgment
+- [x] Invalid action names return clear error
+- [x] Invalid params return Zod validation error with field details
+- [x] HTTP 4xx/5xx errors return `isError: true` with status code and message
+- [x] 202 Accepted responses return success with async acknowledgment
 
 ### Response Normalization
 
-- [ ] Member responses flattened: `lead.*` fields promoted to top level, ~30 lines per member vs ~200 raw
-- [ ] Lead responses flattened: profile fields at top level, `member_id` extracted from `lnuser.id`
-- [ ] Messages: `is_from_user` renamed to `is_from_participant`, `from_firstname`/`from_lastname` combined into `from`
-- [ ] Lists: stripped to `{id, name, total_count, is_processing}` per item (no nested user objects)
-- [ ] Enrichment metadata, processing flags, and internal IDs stripped from all responses
+- [x] Member responses flattened: `lead.*` fields promoted to top level, ~30 lines per member vs ~200 raw
+- [x] Lead responses flattened: profile fields at top level, `member_id` extracted from `lnuser.id`
+- [x] Messages: `is_from_user` renamed to `is_from_participant`, `from_firstname`/`from_lastname` combined into `from`
+- [x] Lists: stripped to `{id, name, total_count, is_processing}` per item (no nested user objects)
+- [x] Enrichment metadata, processing flags, and internal IDs stripped from all responses
 
 ### Quality
 
-- [ ] Integration tests using `InMemoryTransport` for both tools
-- [ ] Unit tests for each action with mocked HTTP client
-- [ ] Unit tests for normalization functions (raw → normalized shape)
+- [x] Integration tests using `InMemoryTransport` for both tools
+- [x] Unit tests for each action with mocked HTTP client
+- [x] Unit tests for normalization functions (raw → normalized shape)
 - [ ] Tool descriptions total under 1,500 tokens (validate with MCP Inspector)
-- [ ] Works with Claude Code's MCP configuration (`claude_desktop_config.json` or `settings.json`)
+- [x] Works with Claude Code's MCP configuration (`claude_desktop_config.json` or `settings.json`)
 
 ## Success Metrics
 
