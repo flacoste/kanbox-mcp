@@ -16,12 +16,19 @@ Actions:
 - list_lists: List available Kanbox lists. Params: limit, offset.`;
 
 export function registerReadTool(server: McpServer, client: KanboxClient) {
-  server.tool(
+  server.registerTool(
     "kanbox_read",
-    DESCRIPTION,
     {
-      action: z.enum(["search_members", "search_leads", "get_messages", "list_lists"]),
-      params: z.record(z.unknown()).optional(),
+      description: DESCRIPTION,
+      inputSchema: {
+        action: z.enum(["search_members", "search_leads", "get_messages", "list_lists"]),
+        params: z.record(z.unknown()).optional(),
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        openWorldHint: true,
+      },
     },
     async ({ action, params }) => {
       try {

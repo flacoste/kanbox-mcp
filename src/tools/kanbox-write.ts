@@ -18,12 +18,19 @@ Actions:
 - add_lead_url: Add lead by LinkedIn URL for full enrichment (takes minutes). Params: linkedin_profile_url, list (name). Poll list_lists for is_processing status.`;
 
 export function registerWriteTool(server: McpServer, client: KanboxClient) {
-  server.tool(
+  server.registerTool(
     "kanbox_write",
-    DESCRIPTION,
     {
-      action: z.enum(["update_member", "send_message", "send_connection", "add_lead", "add_lead_url"]),
-      params: z.record(z.unknown()).optional(),
+      description: DESCRIPTION,
+      inputSchema: {
+        action: z.enum(["update_member", "send_message", "send_connection", "add_lead", "add_lead_url"]),
+        params: z.record(z.unknown()).optional(),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        openWorldHint: true,
+      },
     },
     async ({ action, params }) => {
       try {
