@@ -39,7 +39,7 @@ export class KanboxClient {
         if (value === undefined || value === null) continue;
         if (Array.isArray(value)) {
           for (const v of value) {
-            url.searchParams.append(`${key}[]`, String(v));
+            url.searchParams.append(key, String(v));
           }
         } else {
           url.searchParams.set(key, String(value));

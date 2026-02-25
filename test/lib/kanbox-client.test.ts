@@ -52,7 +52,7 @@ describe("KanboxClient", () => {
     vi.unstubAllGlobals();
   });
 
-  it("appends array params with [] suffix", async () => {
+  it("appends array params as repeated keys (no [] suffix)", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -63,8 +63,9 @@ describe("KanboxClient", () => {
     await client.get("/public/members", { linkedin_public_ids: ["a", "b"] });
 
     const calledUrl = mockFetch.mock.calls[0][0] as string;
-    expect(calledUrl).toContain("linkedin_public_ids%5B%5D=a");
-    expect(calledUrl).toContain("linkedin_public_ids%5B%5D=b");
+    expect(calledUrl).toContain("linkedin_public_ids=a");
+    expect(calledUrl).toContain("linkedin_public_ids=b");
+    expect(calledUrl).not.toContain("linkedin_public_ids%5B%5D");
 
     vi.unstubAllGlobals();
   });

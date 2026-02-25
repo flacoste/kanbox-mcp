@@ -10,6 +10,7 @@ describe("normalizeMember", () => {
   it("flattens lead.* fields to top level", () => {
     const raw = {
       id: 123,
+      linkedin_id: "ACoAABExampleId",
       degree: 1,
       lead: {
         linkedin_public_id: "janedoe",
@@ -63,6 +64,7 @@ describe("normalizeMember", () => {
     const result = normalizeMember(raw);
 
     expect(result.id).toBe(123);
+    expect(result.linkedin_id).toBe("ACoAABExampleId");
     expect(result.linkedin_public_id).toBe("janedoe");
     expect(result.firstname).toBe("Jane");
     expect(result.company_headcount).toBe(250);
@@ -92,6 +94,7 @@ describe("normalizeMember", () => {
     const raw = { id: 1 };
     const result = normalizeMember(raw);
     expect(result.id).toBe(1);
+    expect(result.linkedin_id).toBeNull();
     expect(result.linkedin_public_id).toBeNull();
     expect(result.skills).toEqual([]);
     expect(result.conversations).toEqual([]);

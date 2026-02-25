@@ -9,9 +9,11 @@ import { listLists, listListsSchema } from "../actions/list-lists.js";
 
 const DESCRIPTION = `Read LinkedIn contact data from Kanbox CRM.
 
+IMPORTANT: All results include a linkedin_id field (internal ID starting with "ACoAAA…"). Use this ID — not the public slug — when calling send_message or send_connection.
+
 Actions:
-- search_members: Search inbox/connections. Params: q, type (inbox|unread_inbox|connections), pipeline_name, step_title, linkedin_public_ids (array), updated_since, limit, offset. Use linkedin_public_ids for exact lookup; q is fuzzy.
-- search_leads: Search scraped leads by list name or query. Params: name (list name), q (search), limit, offset.
+- search_members: Search inbox/connections. Params: q (fuzzy name search — a single distinctive term like a last name works best, avoids false matches from common first names), type (inbox|unread_inbox|connections), pipeline_name, step_title, linkedin_public_ids (array of public profile slugs for exact lookup, e.g. ["janedoe"]), updated_since, limit, offset.
+- search_leads: Search scraped leads by list name or query. Params: name (list name), q (search), limit, offset. Note: leads endpoint does NOT return linkedin_id; use search_members to get the internal ID needed for messaging/connections.
 - get_messages: Get conversation messages. Params: conversation_id (integer, from search_members conversations[].id), cursor (optional, for pagination).
 - list_lists: List available Kanbox lists. Params: limit, offset.`;
 

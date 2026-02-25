@@ -5,6 +5,7 @@
 
 export interface NormalizedMember {
   id: number;
+  linkedin_id: string | null;
   linkedin_public_id: string;
   firstname: string;
   lastname: string;
@@ -100,6 +101,7 @@ export function normalizeMember(raw: any): NormalizedMember {
 
   return {
     id: raw.id,
+    linkedin_id: raw.linkedin_id ?? null,
     linkedin_public_id: lead.linkedin_public_id ?? null,
     firstname: lead.firstname ?? null,
     lastname: lead.lastname ?? null,

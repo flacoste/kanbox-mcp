@@ -12,8 +12,8 @@ const DESCRIPTION = `Write LinkedIn contact data to Kanbox CRM. All writes are a
 
 Actions:
 - update_member: Update member fields. Params: id (integer), email, phone, labels (string array — FULL REPLACEMENT, read existing first), pipeline, step, custom, icebreaker.
-- send_message: Send LinkedIn message. Params: recipient_linkedin_id, message.
-- send_connection: Send connection request. Params: recipient_linkedin_id, message (optional, max 300 chars).
+- send_message: Send LinkedIn message. Params: recipient_linkedin_id (internal ID starting with "ACoAAA…", from search_members linkedin_id field — NOT the public slug), message.
+- send_connection: Send connection request. Params: recipient_linkedin_id (internal ID starting with "ACoAAA…", from search_members linkedin_id field — NOT the public slug), message (optional, max 300 chars).
 - add_lead: Add structured lead to a pre-existing list. Params: list (name), linkedin_public_id, firstname, lastname, plus optional email/phone/company/location/job/icebreaker/labels/pipeline/step. Partial enrichment only.
 - add_lead_url: Add lead by LinkedIn URL for full enrichment (takes minutes). Params: linkedin_profile_url, list (name). Poll list_lists for is_processing status.`;
 
