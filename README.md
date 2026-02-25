@@ -4,12 +4,21 @@
 
 MCP server for the [Kanbox](https://kanbox.io) LinkedIn CRM API. Exposes two dispatcher tools — `kanbox_read` (4 actions) and `kanbox_write` (5 actions) — for use with Claude Code and other MCP clients.
 
+## Use cases
+
+- **CRM triage** — Search unread inbox messages, read conversations, then draft and send replies — all from your editor.
+- **Pipeline management** — Query contacts by pipeline/step, update labels or move contacts between steps based on conversation context.
+- **Outreach automation** — Build a lead list, send personalized connection requests with icebreakers, and follow up with messages once connected.
+- **Lead enrichment** — Add leads by LinkedIn URL for full background enrichment, then poll processing status until complete.
+- **Contact lookup** — Resolve a LinkedIn profile slug to the internal `linkedin_id` needed for messaging, without leaving your workflow.
+
 ## Design
 
-This server uses a **two-tool dispatcher pattern** instead of exposing 9 separate MCP tools. This is intentional:
+This server uses a **two-tool dispatcher pattern** instead of exposing 9 separate MCP tools. Inspired by [Jesse Vincent's article on MCP API design](https://blog.fsck.com/2025/10/19/mcps-are-not-like-other-apis/), the goals are:
 
 - **Minimal context footprint** — LLM clients load every tool definition into their context window. Two tools with action routing costs far less context than nine individual tool definitions, leaving more room for the actual conversation.
 - **Self-documenting** — Each tool's description includes the full action catalog with parameter names and gotchas. The LLM gets everything it needs from the tool definition itself, without requiring external documentation in the system prompt.
+- **Read/write permission split** — Two tools instead of one lets MCP clients auto-approve `kanbox_read` while requiring explicit confirmation for `kanbox_write`.
 - **Flat responses** — The Kanbox API nests contact data under `lead.*` and `lnuser.*` keys. This server flattens responses so fields like `linkedin_id`, `firstname`, `email` appear at the top level, reducing the tokens the LLM spends parsing nested structures.
 
 ### Key response fields
@@ -25,14 +34,6 @@ This server uses a **two-tool dispatcher pattern** instead of exposing 9 separat
 `list_lists` returns list metadata:
 
 > `name`, `count`, `is_processing`
-
-## Use cases
-
-- **CRM triage** — Search unread inbox messages, read conversations, then draft and send replies — all from your editor.
-- **Pipeline management** — Query contacts by pipeline/step, update labels or move contacts between steps based on conversation context.
-- **Outreach automation** — Build a lead list, send personalized connection requests with icebreakers, and follow up with messages once connected.
-- **Lead enrichment** — Add leads by LinkedIn URL for full background enrichment, then poll processing status until complete.
-- **Contact lookup** — Resolve a LinkedIn profile slug to the internal `linkedin_id` needed for messaging, without leaving your workflow.
 
 ## Setup
 
