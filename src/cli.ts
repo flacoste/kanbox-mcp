@@ -67,8 +67,12 @@ function isCommand(value: string): value is Command {
   return (COMMANDS as readonly string[]).includes(value);
 }
 
-function parseLimit(value: string | undefined): number | undefined {
-  if (value === undefined) return undefined;
+function str(value: string | boolean | undefined): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function parseLimit(value: string | boolean | undefined): number | undefined {
+  if (value === undefined || typeof value !== "string") return undefined;
   const n = parseInt(value, 10);
   if (Number.isNaN(n) || n <= 0) {
     console.error("--limit must be a positive integer");
@@ -101,13 +105,14 @@ async function handleSearchMembers(client: KanboxClient, commandArgs: string[]):
   });
 
   const limit = parseLimit(values.limit);
+  const ids = str(values["linkedin-public-ids"]);
   const params = searchMembersSchema.parse(stripUndefined({
-    q: values.q,
-    linkedin_public_ids: values["linkedin-public-ids"]?.split(","),
-    type: values.type,
-    pipeline_name: values["pipeline-name"],
-    step_title: values["step-title"],
-    updated_since: values["updated-since"],
+    q: str(values.q),
+    linkedin_public_ids: ids?.split(","),
+    type: str(values.type),
+    pipeline_name: str(values["pipeline-name"]),
+    step_title: str(values["step-title"]),
+    updated_since: str(values["updated-since"]),
   }));
 
   const items = await paginateOffset(
@@ -142,12 +147,13 @@ async function handleGetMessages(client: KanboxClient, commandArgs: string[]): P
   const validatedParams = getMessagesSchema.parse({ conversation_id: conversationId });
 
   // Capture metadata from first page
-  let metadata: { conversation_id: string; participant_name: string; participant_linkedin_id: string | null } | null = null;
+  type ConversationMeta = { conversation_id: string; participant_name: string; participant_linkedin_id: string | null };
+  let metadata: ConversationMeta | undefined;
 
   const messages = await paginateCursor(
     async (cursor?: string) => {
       const result = await getMessages(client, { ...validatedParams, cursor });
-      if (!metadata) {
+      if (metadata === undefined) {
         metadata = {
           conversation_id: result.conversation_id,
           participant_name: result.participant_name,
@@ -164,7 +170,9 @@ async function handleGetMessages(client: KanboxClient, commandArgs: string[]): P
   );
 
   process.stdout.write(JSON.stringify({
-    ...metadata,
+    conversation_id: metadata?.conversation_id ?? String(conversationId),
+    participant_name: metadata?.participant_name ?? "Unknown",
+    participant_linkedin_id: metadata?.participant_linkedin_id ?? null,
     messages,
   }));
 }
@@ -182,8 +190,8 @@ async function handleSearchLeads(client: KanboxClient, commandArgs: string[]): P
 
   const limit = parseLimit(values.limit);
   const params = searchLeadsSchema.parse(stripUndefined({
-    q: values.q,
-    name: values.name,
+    q: str(values.q),
+    name: str(values.name),
   }));
 
   const items = await paginateOffset(
