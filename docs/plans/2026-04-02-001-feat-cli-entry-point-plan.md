@@ -1,7 +1,7 @@
 ---
 title: "feat: Add CLI entry point with auto-pagination"
 type: feat
-status: active
+status: completed
 date: 2026-04-02
 origin: docs/brainstorms/2026-04-02-cli-entry-point-requirements.md
 ---
