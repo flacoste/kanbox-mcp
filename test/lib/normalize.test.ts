@@ -18,8 +18,8 @@ describe("normalizeMember", () => {
         lastname: "Doe",
         headline: "PM at Acme",
         company: "Acme",
-        company_headcount: 250,
-        company_linkedin_url: "https://linkedin.com/company/acme",
+        company_employee_count: 250,
+        company_linkedin: "https://linkedin.com/company/acme",
         company_website: "https://acme.com",
         job: "PM",
         location: "SF",
@@ -88,6 +88,23 @@ describe("normalizeMember", () => {
     expect(result).not.toHaveProperty("score");
     expect(result).not.toHaveProperty("webhook_url");
     expect(result).not.toHaveProperty("lead");
+  });
+
+  it("maps company_employee_count to company_headcount", () => {
+    const raw = { id: 1, lead: { company_employee_count: 250 } };
+    expect(normalizeMember(raw).company_headcount).toBe(250);
+  });
+
+  it("maps company_linkedin to company_linkedin_url", () => {
+    const raw = { id: 1, lead: { company_linkedin: "https://linkedin.com/company/acme" } };
+    expect(normalizeMember(raw).company_linkedin_url).toBe("https://linkedin.com/company/acme");
+  });
+
+  it("returns null for company_headcount and company_linkedin_url when missing", () => {
+    const raw = { id: 1, lead: {} };
+    const result = normalizeMember(raw);
+    expect(result.company_headcount).toBeNull();
+    expect(result.company_linkedin_url).toBeNull();
   });
 
   it("handles missing lead object gracefully", () => {
