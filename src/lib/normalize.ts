@@ -45,6 +45,19 @@ export interface NormalizedMember {
   is_starred: boolean;
   is_archived: boolean;
   updated_at: string | null;
+  // Position history — populated only when the caller opts in (search_members
+  // include_history). Absent (not null) by default so the compact shape is
+  // byte-for-byte unchanged. Read from lead.* with a raw.* fallback because the
+  // exact nesting was not confirmable against the live API in this environment.
+  years_of_experience?: number | null;
+  year_position?: number | null;
+  month_position?: number | null;
+  startyear_position?: number | null;
+  startmonth_position?: number | null;
+  // Prior roles, passed through losslessly (each entry's field names were not
+  // confirmed against a live response). Always an array when present; a single
+  // raw object is wrapped in a one-element array.
+  past_positions?: Array<Record<string, unknown>>;
 }
 
 export interface NormalizedLead {
@@ -93,11 +106,14 @@ export interface NormalizedList {
   is_processing: boolean;
 }
 
-export function normalizeMember(raw: Record<string, unknown>): NormalizedMember {
+export function normalizeMember(
+  raw: Record<string, unknown>,
+  includeHistory = false,
+): NormalizedMember {
   const lead = (raw.lead ?? {}) as Record<string, unknown>;
   const lastMsg = raw.last_message as Record<string, unknown> | undefined;
 
-  return {
+  const member = {
     id: raw.id,
     linkedin_id: raw.linkedin_id ?? null,
     linkedin_public_id: lead.linkedin_public_id ?? null,
@@ -151,6 +167,27 @@ export function normalizeMember(raw: Record<string, unknown>): NormalizedMember 
     is_archived: raw.is_archived ?? false,
     updated_at: raw.updated_at ?? null,
   } as NormalizedMember;
+
+  if (includeHistory) {
+    const rawPast = lead.past_positions ?? raw.past_positions;
+    member.years_of_experience =
+      (lead.years_of_experience ?? raw.years_of_experience ?? null) as number | null;
+    member.year_position =
+      (lead.year_position ?? raw.year_position ?? null) as number | null;
+    member.month_position =
+      (lead.month_position ?? raw.month_position ?? null) as number | null;
+    member.startyear_position =
+      (lead.startyear_position ?? raw.startyear_position ?? null) as number | null;
+    member.startmonth_position =
+      (lead.startmonth_position ?? raw.startmonth_position ?? null) as number | null;
+    member.past_positions = Array.isArray(rawPast)
+      ? (rawPast as Record<string, unknown>[])
+      : rawPast != null
+        ? [rawPast as Record<string, unknown>]
+        : [];
+  }
+
+  return member;
 }
 
 export function normalizeLead(raw: Record<string, unknown>): NormalizedLead {

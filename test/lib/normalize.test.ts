@@ -116,6 +116,105 @@ describe("normalizeMember", () => {
     expect(result.skills).toEqual([]);
     expect(result.conversations).toEqual([]);
   });
+
+  it("omits position history by default (byte-for-byte compact shape)", () => {
+    const raw = {
+      id: 1,
+      lead: {
+        linkedin_public_id: "jane",
+        past_positions: [{ title: "PM" }],
+        years_of_experience: 10,
+        year_position: 2024,
+        month_position: 3,
+        startyear_position: 2021,
+        startmonth_position: 6,
+      },
+    };
+
+    const byDefault = normalizeMember(raw);
+    const explicitFalse = normalizeMember(raw, false);
+
+    for (const key of [
+      "past_positions",
+      "years_of_experience",
+      "year_position",
+      "month_position",
+      "startyear_position",
+      "startmonth_position",
+    ]) {
+      expect(byDefault).not.toHaveProperty(key);
+      expect(explicitFalse).not.toHaveProperty(key);
+    }
+    expect(explicitFalse).toEqual(byDefault);
+  });
+
+  it("includes position history when includeHistory is true", () => {
+    const raw = {
+      id: 1,
+      lead: {
+        linkedin_public_id: "jane",
+        past_positions: [
+          { title: "PM", company: "Acme" },
+          { title: "Engineer", company: "Foo" },
+        ],
+        years_of_experience: 12,
+        year_position: 2024,
+        month_position: 3,
+        startyear_position: 2021,
+        startmonth_position: 6,
+      },
+    };
+
+    const result = normalizeMember(raw, true);
+
+    expect(result.years_of_experience).toBe(12);
+    expect(result.year_position).toBe(2024);
+    expect(result.month_position).toBe(3);
+    expect(result.startyear_position).toBe(2021);
+    expect(result.startmonth_position).toBe(6);
+    expect(result.past_positions).toEqual([
+      { title: "PM", company: "Acme" },
+      { title: "Engineer", company: "Foo" },
+    ]);
+  });
+
+  it("wraps a single past_positions object and defaults missing history", () => {
+    const single = normalizeMember(
+      { id: 1, lead: { linkedin_public_id: "jane", past_positions: { title: "Solo" } } },
+      true,
+    );
+    expect(single.past_positions).toEqual([{ title: "Solo" }]);
+
+    const empty = normalizeMember({ id: 1, lead: { linkedin_public_id: "jane" } }, true);
+    expect(empty.past_positions).toEqual([]);
+    expect(empty.years_of_experience).toBeNull();
+    expect(empty.year_position).toBeNull();
+    expect(empty.month_position).toBeNull();
+    expect(empty.startyear_position).toBeNull();
+    expect(empty.startmonth_position).toBeNull();
+  });
+
+  it("falls back to top-level raw history fields when absent on lead", () => {
+    const result = normalizeMember(
+      {
+        id: 1,
+        lead: { linkedin_public_id: "jane" },
+        years_of_experience: 8,
+        year_position: 2023,
+        month_position: 11,
+        startyear_position: 2019,
+        startmonth_position: 4,
+        past_positions: [{ title: "Top" }],
+      },
+      true,
+    );
+    expect(result.years_of_experience).toBe(8);
+    expect(result.year_position).toBe(2023);
+    expect(result.month_position).toBe(11);
+    expect(result.startyear_position).toBe(2019);
+    expect(result.startmonth_position).toBe(4);
+    expect(result.past_positions).toEqual([{ title: "Top" }]);
+  });
 });
 
 describe("normalizeLead", () => {
