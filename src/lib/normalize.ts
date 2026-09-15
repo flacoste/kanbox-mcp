@@ -1,6 +1,19 @@
 // Normalize verbose Kanbox API responses into compact, flat structures.
 // See plan for field mappings: members flatten lead.*, leads flatten lnuser.*
 
+export interface PastPosition {
+  title: string | null;
+  company: string | null;
+  company_linkedin_url: string | null;
+  location: string | null;
+  description: string | null;
+  start_year: number | null;
+  start_month: number | null;
+  end_year: number | null;
+  end_month: number | null;
+  is_current: boolean;
+}
+
 export interface NormalizedMember {
   id: number;
   linkedin_id: string | null;
@@ -47,17 +60,18 @@ export interface NormalizedMember {
   updated_at: string | null;
   // Position history — populated only when the caller opts in (search_members
   // include_history). Absent (not null) by default so the compact shape is
-  // byte-for-byte unchanged. Read from lead.* with a raw.* fallback because the
-  // exact nesting was not confirmable against the live API in this environment.
+  // byte-for-byte unchanged. Confirmed against the live /public/members
+  // response: every history field lives on lead.*; the raw.* fallback is kept
+  // as a defensive backstop.
   years_of_experience?: number | null;
   year_position?: number | null;
   month_position?: number | null;
   startyear_position?: number | null;
   startmonth_position?: number | null;
-  // Prior roles, passed through losslessly (each entry's field names were not
-  // confirmed against a live response). Always an array when present; a single
-  // raw object is wrapped in a one-element array.
-  past_positions?: Array<Record<string, unknown>>;
+  // Prior roles, normalized from lead.past_positions (always an array; may be
+  // empty). company_linkedin is renamed company_linkedin_url for consistency
+  // with the current-position fields; the internal company_id is dropped.
+  past_positions?: PastPosition[];
 }
 
 export interface NormalizedLead {
@@ -180,11 +194,21 @@ export function normalizeMember(
       (lead.startyear_position ?? raw.startyear_position ?? null) as number | null;
     member.startmonth_position =
       (lead.startmonth_position ?? raw.startmonth_position ?? null) as number | null;
-    member.past_positions = Array.isArray(rawPast)
-      ? (rawPast as Record<string, unknown>[])
-      : rawPast != null
-        ? [rawPast as Record<string, unknown>]
-        : [];
+    const entries = (
+      Array.isArray(rawPast) ? rawPast : rawPast != null ? [rawPast] : []
+    ) as Record<string, unknown>[];
+    member.past_positions = entries.map((p) => ({
+      title: (p.title ?? null) as string | null,
+      company: (p.company ?? null) as string | null,
+      company_linkedin_url: (p.company_linkedin ?? null) as string | null,
+      location: (p.location ?? null) as string | null,
+      description: (p.description ?? null) as string | null,
+      start_year: (p.start_year ?? null) as number | null,
+      start_month: (p.start_month ?? null) as number | null,
+      end_year: (p.end_year ?? null) as number | null,
+      end_month: (p.end_month ?? null) as number | null,
+      is_current: (p.is_current ?? false) as boolean,
+    }));
   }
 
   return member;

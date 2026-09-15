@@ -88,7 +88,8 @@ describe("searchMembers", () => {
 
     const result = await searchMembers(client, { include_history: true });
 
-    expect(result.items[0].past_positions).toEqual([{ title: "PM" }]);
+    expect(result.items[0].past_positions?.[0].title).toBe("PM");
+    expect(result.items[0].past_positions?.[0].is_current).toBe(false);
     expect(result.items[0].years_of_experience).toBe(9);
   });
 

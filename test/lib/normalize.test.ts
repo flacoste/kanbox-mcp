@@ -154,8 +154,20 @@ describe("normalizeMember", () => {
       lead: {
         linkedin_public_id: "jane",
         past_positions: [
-          { title: "PM", company: "Acme" },
-          { title: "Engineer", company: "Foo" },
+          {
+            title: "PM",
+            company: "Acme",
+            company_id: 42,
+            company_linkedin: "https://linkedin.com/company/acme",
+            location: "SF",
+            description: "led product",
+            start_year: 2018,
+            start_month: 3,
+            end_year: 2021,
+            end_month: 6,
+            is_current: false,
+          },
+          { title: "Engineer", company: "Foo", start_year: 2021, start_month: 7, is_current: true },
         ],
         years_of_experience: 12,
         year_position: 2024,
@@ -173,8 +185,30 @@ describe("normalizeMember", () => {
     expect(result.startyear_position).toBe(2021);
     expect(result.startmonth_position).toBe(6);
     expect(result.past_positions).toEqual([
-      { title: "PM", company: "Acme" },
-      { title: "Engineer", company: "Foo" },
+      {
+        title: "PM",
+        company: "Acme",
+        company_linkedin_url: "https://linkedin.com/company/acme",
+        location: "SF",
+        description: "led product",
+        start_year: 2018,
+        start_month: 3,
+        end_year: 2021,
+        end_month: 6,
+        is_current: false,
+      },
+      {
+        title: "Engineer",
+        company: "Foo",
+        company_linkedin_url: null,
+        location: null,
+        description: null,
+        start_year: 2021,
+        start_month: 7,
+        end_year: null,
+        end_month: null,
+        is_current: true,
+      },
     ]);
   });
 
@@ -183,7 +217,20 @@ describe("normalizeMember", () => {
       { id: 1, lead: { linkedin_public_id: "jane", past_positions: { title: "Solo" } } },
       true,
     );
-    expect(single.past_positions).toEqual([{ title: "Solo" }]);
+    expect(single.past_positions).toEqual([
+      {
+        title: "Solo",
+        company: null,
+        company_linkedin_url: null,
+        location: null,
+        description: null,
+        start_year: null,
+        start_month: null,
+        end_year: null,
+        end_month: null,
+        is_current: false,
+      },
+    ]);
 
     const empty = normalizeMember({ id: 1, lead: { linkedin_public_id: "jane" } }, true);
     expect(empty.past_positions).toEqual([]);
@@ -213,7 +260,20 @@ describe("normalizeMember", () => {
     expect(result.month_position).toBe(11);
     expect(result.startyear_position).toBe(2019);
     expect(result.startmonth_position).toBe(4);
-    expect(result.past_positions).toEqual([{ title: "Top" }]);
+    expect(result.past_positions).toEqual([
+      {
+        title: "Top",
+        company: null,
+        company_linkedin_url: null,
+        location: null,
+        description: null,
+        start_year: null,
+        start_month: null,
+        end_year: null,
+        end_month: null,
+        is_current: false,
+      },
+    ]);
   });
 });
 
