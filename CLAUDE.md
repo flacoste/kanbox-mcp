@@ -18,6 +18,8 @@ npm start        # node dist/index.js (needs KANBOX_API_TOKEN)
 - **Actions:** `src/actions/*.ts` — one file per API action
 - **Lib:** `src/lib/kanbox-client.ts` (HTTP client), `src/lib/errors.ts` (error formatting), `src/lib/normalize.ts` (response flattening)
 - **Tests:** `test/` mirrors `src/` structure. Integration tests use `InMemoryTransport.createLinkedPair()`.
+- **Solutions:** `docs/solutions/` — documented solutions to past problems (bugs, integration gotchas, conventions), organized by category with YAML frontmatter (`module`, `tags`, `problem_type`). Relevant when implementing or debugging in documented areas.
+- **Concepts:** `CONCEPTS.md` — shared domain vocabulary (Member, Lead, Action, Normalization, …). Relevant when orienting to the codebase or discussing domain concepts.
 
 ## Conventions
 
