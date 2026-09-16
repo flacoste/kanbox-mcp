@@ -27,6 +27,8 @@ This server uses a **two-tool dispatcher pattern** instead of exposing 9 separat
 
 > `id`, `linkedin_id`, `linkedin_public_id`, `firstname`, `lastname`, `email`, `phone`, `company`, `job`, `location`, `labels`, `pipeline`, `step`, `icebreaker`, `custom`, `conversations` (with `id`, `last_message`, `unread_count`)
 
+With `include_history: true`, members also carry `years_of_experience`, the current-position dates (`year_position`, `month_position`, `startyear_position`, `startmonth_position`), and `past_positions` — an array of prior roles, each with `title`, `company`, `company_linkedin_url`, `location`, `description`, `start_year`/`start_month`, `end_year`/`end_month`, and `is_current`. These are omitted by default to keep responses compact; request them only when reconstructing a contact's job changes.
+
 `search_leads` returns scraped lead data (no `linkedin_id` — resolve via `search_members`):
 
 > `linkedin_public_id`, `firstname`, `lastname`, `email`, `phone`, `company`, `job`, `location`
@@ -105,6 +107,7 @@ Search inbox, connections, or unread messages.
 | `updated_since` | string | no | ISO 8601 timestamp filter |
 | `limit` | number | no | Max results (1-100) |
 | `offset` | number | no | Results to skip |
+| `include_history` | boolean | no | Include position history (`past_positions`, `years_of_experience`, position dates). Default `false` — off keeps output compact |
 
 #### `search_leads`
 

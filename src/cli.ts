@@ -36,6 +36,7 @@ Options:
   --step-title          Filter by pipeline step title
   --updated-since       ISO 8601 timestamp filter
   --limit               Max total results to return
+  --include-history     Include position history (default off)
   --help                Show this help message
 `,
   "get-messages": `Usage: kanbox get-messages <conversation_id> [options]
@@ -100,6 +101,7 @@ async function handleSearchMembers(client: KanboxClient, commandArgs: string[]):
       "step-title": { type: "string" },
       "updated-since": { type: "string" },
       limit: { type: "string" },
+      "include-history": { type: "boolean" },
     },
     strict: false,
   });
@@ -113,6 +115,7 @@ async function handleSearchMembers(client: KanboxClient, commandArgs: string[]):
     pipeline_name: str(values["pipeline-name"]),
     step_title: str(values["step-title"]),
     updated_since: str(values["updated-since"]),
+    include_history: values["include-history"] === true ? true : undefined,
   }));
 
   const items = await paginateOffset(

@@ -61,4 +61,54 @@ describe("searchMembers", () => {
       linkedin_public_ids: ["jane", "john"],
     });
   });
+
+  it("strips include_history from the API query params", async () => {
+    await searchMembers(client, { q: "jane", include_history: true });
+
+    expect(getSpy).toHaveBeenCalledWith("/public/members", { q: "jane" });
+  });
+
+  it("threads include_history through to normalized items", async () => {
+    getSpy.mockResolvedValueOnce({
+      status: 200,
+      data: {
+        items: [
+          {
+            id: 1,
+            lead: {
+              linkedin_public_id: "jane",
+              past_positions: [{ title: "PM" }],
+              years_of_experience: 9,
+            },
+          },
+        ],
+        count: 1,
+      },
+    });
+
+    const result = await searchMembers(client, { include_history: true });
+
+    expect(result.items[0].past_positions?.[0].title).toBe("PM");
+    expect(result.items[0].past_positions?.[0].is_current).toBe(false);
+    expect(result.items[0].years_of_experience).toBe(9);
+  });
+
+  it("omits history when include_history is absent", async () => {
+    getSpy.mockResolvedValueOnce({
+      status: 200,
+      data: {
+        items: [
+          {
+            id: 1,
+            lead: { linkedin_public_id: "jane", past_positions: [{ title: "PM" }] },
+          },
+        ],
+        count: 1,
+      },
+    });
+
+    const result = await searchMembers(client, {});
+
+    expect(result.items[0]).not.toHaveProperty("past_positions");
+  });
 });

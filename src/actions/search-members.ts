@@ -11,6 +11,12 @@ export const searchMembersSchema = z.object({
   updated_since: z.string().describe("ISO 8601 timestamp to filter by update date").optional(),
   limit: z.number().int().min(1).max(100).describe("Max results to return (1-100)").optional(),
   offset: z.number().int().min(0).describe("Number of results to skip (0+)").optional(),
+  include_history: z
+    .boolean()
+    .describe(
+      "Include LinkedIn position history (past_positions, years_of_experience, position dates). Default false — off keeps output compact.",
+    )
+    .optional(),
 });
 
 export type SearchMembersParams = z.infer<typeof searchMembersSchema>;
@@ -19,13 +25,16 @@ export async function searchMembers(
   client: KanboxClient,
   params: SearchMembersParams,
 ) {
+  const { include_history, ...query } = params;
   const { data } = await client.get<{ items: unknown[]; count: number }>(
     "/public/members",
-    params as Record<string, unknown>,
+    query as Record<string, unknown>,
   );
 
   return {
-    items: ((data.items ?? []) as Record<string, unknown>[]).map(normalizeMember),
+    items: ((data.items ?? []) as Record<string, unknown>[]).map((m) =>
+      normalizeMember(m, include_history ?? false),
+    ),
     count: data.count ?? 0,
   };
 }

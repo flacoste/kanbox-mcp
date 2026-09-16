@@ -193,6 +193,53 @@ describe("CLI commands", () => {
       expect(data[0]).not.toHaveProperty("lead");
     });
 
+    it("adds normalized history with --include-history and keeps the flag out of the query", async () => {
+      const getSpy = mockClientGet([
+        {
+          status: 200,
+          data: {
+            items: [
+              {
+                id: 1,
+                lead: {
+                  linkedin_public_id: "jane",
+                  past_positions: [
+                    {
+                      title: "PM",
+                      company: "Acme",
+                      company_id: 42,
+                      company_linkedin: "https://linkedin.com/company/acme",
+                      start_year: 2018,
+                      is_current: false,
+                    },
+                  ],
+                  years_of_experience: 7,
+                },
+              },
+            ],
+            count: 1,
+          },
+        },
+      ]);
+
+      const result = await runCli(["search-members", "--q", "jane", "--include-history"], ENV);
+      expect(result.exitCode).toBe(0);
+
+      expect(getSpy).toHaveBeenCalledWith(
+        "/public/members",
+        expect.not.objectContaining({ include_history: expect.anything() }),
+      );
+
+      const data = JSON.parse(result.stdout);
+      expect(data[0].years_of_experience).toBe(7);
+      expect(data[0].past_positions[0]).toMatchObject({
+        title: "PM",
+        company_linkedin_url: "https://linkedin.com/company/acme",
+        is_current: false,
+      });
+      expect(data[0].past_positions[0]).not.toHaveProperty("company_id");
+    });
+
     it("passes --limit to paginator", async () => {
       const items = Array.from({ length: 10 }, (_, i) => ({
         id: i,
