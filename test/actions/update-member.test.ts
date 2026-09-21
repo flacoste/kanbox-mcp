@@ -25,6 +25,41 @@ describe("updateMember", () => {
     });
   });
 
+  it("forwards empty-string pipeline/step as a clear", async () => {
+    await updateMember(client, { id: 123, pipeline: "", step: "" });
+
+    expect(patchSpy).toHaveBeenCalledWith("/public/members/123", {
+      pipeline: "",
+      step: "",
+    });
+  });
+
+  it("normalizes null pipeline/step to empty-string clear", async () => {
+    await updateMember(client, { id: 123, pipeline: null, step: null });
+
+    expect(patchSpy).toHaveBeenCalledWith("/public/members/123", {
+      pipeline: "",
+      step: "",
+    });
+  });
+
+  it("omits pipeline/step from the body when absent", async () => {
+    await updateMember(client, { id: 123, email: "a@b.com" });
+
+    expect(patchSpy).toHaveBeenCalledWith("/public/members/123", {
+      email: "a@b.com",
+    });
+  });
+
+  it("forwards a non-empty pipeline/step verbatim", async () => {
+    await updateMember(client, { id: 123, pipeline: "Outreach", step: "Follow-up" });
+
+    expect(patchSpy).toHaveBeenCalledWith("/public/members/123", {
+      pipeline: "Outreach",
+      step: "Follow-up",
+    });
+  });
+
   it("returns success with async note for 202", async () => {
     const result = await updateMember(client, { id: 123 });
 
