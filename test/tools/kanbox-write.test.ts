@@ -60,6 +60,22 @@ describe("kanbox_write integration", () => {
     expect(patchSpy).toHaveBeenCalledWith("/public/members/123", { labels: ["Priority"] });
   });
 
+  it("clears pipeline/step when update_member is called with null", async () => {
+    const result = await client.callTool({
+      name: "kanbox_write",
+      arguments: {
+        action: "update_member",
+        params: { id: 123, pipeline: null, step: null },
+      },
+    });
+
+    expect(result.isError).toBeFalsy();
+    expect(patchSpy).toHaveBeenCalledWith("/public/members/123", {
+      pipeline: "",
+      step: "",
+    });
+  });
+
   it("dispatches send_message action", async () => {
     const result = await client.callTool({
       name: "kanbox_write",

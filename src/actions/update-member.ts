@@ -6,8 +6,16 @@ export const updateMemberSchema = z.object({
   email: z.string().describe("New email address").optional(),
   phone: z.string().describe("New phone number").optional(),
   labels: z.array(z.string()).describe("FULL REPLACEMENT label list — pass ALL desired labels, not just additions").optional(),
-  pipeline: z.string().describe("Pipeline name to assign").optional(),
-  step: z.string().describe("Pipeline step to assign").optional(),
+  pipeline: z
+    .string()
+    .nullable()
+    .describe('Pipeline name to assign; pass "" or null to un-stage (clear the pipeline)')
+    .optional(),
+  step: z
+    .string()
+    .nullable()
+    .describe('Pipeline step to assign; pass "" or null to clear the step')
+    .optional(),
   custom: z.string().describe("Custom note field").optional(),
   icebreaker: z.string().describe("Icebreaker note").optional(),
 });
@@ -19,6 +27,11 @@ export async function updateMember(
   params: UpdateMemberParams,
 ) {
   const { id, ...body } = params;
+  // KanBox unsets a pipeline/step only on "" — null is a silent no-op — so
+  // normalize an explicit clear (null) to the empty string the API acts on.
+  for (const key of ["pipeline", "step"] as const) {
+    if (body[key] === null) body[key] = "";
+  }
   const { status } = await client.patch(`/public/members/${id}`, body);
 
   return {

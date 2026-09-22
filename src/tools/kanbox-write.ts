@@ -11,7 +11,7 @@ import { addLeadUrl, addLeadUrlSchema } from "../actions/add-lead-url.js";
 const DESCRIPTION = `Write LinkedIn contact data to Kanbox CRM. All writes are async (202 Accepted).
 
 Actions:
-- update_member: Update member fields. Params: id (integer), email, phone, labels (string array — FULL REPLACEMENT, read existing first), pipeline, step, custom, icebreaker.
+- update_member: Update member fields. Params: id (integer), email, phone, labels (string array — FULL REPLACEMENT, read existing first), pipeline, step, custom, icebreaker. Pass pipeline/step as "" or null to un-stage (clear) the assignment; omit them to leave the current assignment unchanged.
 - send_message: Send LinkedIn message. Params: recipient_linkedin_id (internal ID starting with "ACoAAA…", from search_members linkedin_id field — NOT the public slug), message.
 - send_connection: Send connection request. Params: recipient_linkedin_id (internal ID starting with "ACoAAA…", from search_members linkedin_id field — NOT the public slug), message (optional, max 300 chars).
 - add_lead: Add structured lead to a pre-existing list. Params: list (name), linkedin_public_id, firstname, lastname, plus optional email/phone/company/location/job/icebreaker/labels/pipeline/step. Partial enrichment only.
